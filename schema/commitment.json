@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://redas.app/schemas/commitment.json",
+  "title": "Redas Commitment",
+  "description": "A structured commitment: one party committing to do something for another party, optionally by a deadline. The Redas Commitment Protocol defines nine canonical fields that participate in the SHA-256 identity hash, plus a handful of metadata fields that are part of the registration payload but do not affect the hash.",
+  "type": "object",
+  "required": ["description", "owner_name", "owed_to_name"],
+  "properties": {
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What is being committed to, in free-form prose. Example: 'Install the 480V transformer pad'. HASH FIELD.",
+      "x-hashed": true
+    },
+    "owner_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Person making the commitment (the party responsible for delivery). Example: 'John Smith'. HASH FIELD.",
+      "x-hashed": true
+    },
+    "owner_company": {
+      "type": ["string", "null"],
+      "description": "Company affiliation of the committer. Example: 'PCL Solar'. HASH FIELD. Optional — empty string and null are treated identically for hash purposes.",
+      "x-hashed": true
+    },
+    "owed_to_name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Person the commitment is owed to (the party expecting delivery). Example: 'Mike Stevenson'. HASH FIELD.",
+      "x-hashed": true
+    },
+    "owed_to_company": {
+      "type": ["string", "null"],
+      "description": "Company affiliation of the recipient. HASH FIELD. Optional — empty string and null are treated identically for hash purposes.",
+      "x-hashed": true
+    },
+    "due_date": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "Deadline as an ISO 8601 date (YYYY-MM-DD). HASH FIELD. Null when no deadline is specified.",
+      "x-hashed": true
+    },
+    "date_type": {
+      "type": ["string", "null"],
+      "enum": ["exact", "range", "asap", "day_of_week", "relative", null],
+      "description": "How the deadline was expressed. 'exact' means a specific date. 'range' means a window. 'asap' means 'as soon as possible'. 'day_of_week' means 'by Friday' without a specific date. 'relative' means 'in two weeks'. HASH FIELD.",
+      "x-hashed": true
+    },
+    "category_primary": {
+      "type": ["string", "null"],
+      "enum": ["Financial", "Schedule", "Scope", "Resource", "Other", null],
+      "description": "Top-level classification of the commitment. HASH FIELD.",
+      "x-hashed": true
+    },
+    "category_secondary": {
+      "type": ["string", "null"],
+      "description": "Free-form subcategory within the primary category. Example: 'Electrical' within 'Schedule'. HASH FIELD.",
+      "x-hashed": true
+    },
+
+    "confidence": {
+      "oneOf": [
+        { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+        { "type": "integer", "minimum": 0, "maximum": 100 }
+      ],
+      "description": "How confident the registering party is that the commitment will be delivered. Useful for AI agents registering their own commitments. NOT part of the identity hash — it is metadata, not identity. Default 'MEDIUM' (70) when omitted.",
+      "x-hashed": false
+    },
+    "context": {
+      "type": ["string", "null"],
+      "description": "Free-form context surrounding the commitment — a quote, a meeting excerpt, a reasoning trace. NOT part of the identity hash.",
+      "x-hashed": false
+    },
+    "source_reference": {
+      "type": ["string", "null"],
+      "description": "External identifier from the system that originated the commitment (e.g., Jira ticket ID, meeting recording URL, agent conversation ID). NOT part of the identity hash.",
+      "x-hashed": false
+    }
+  },
+  "additionalProperties": false,
+
+  "x-redas-protocol-version": "1.0.0",
+  "x-canonical-hash-fields": [
+    "category_primary",
+    "category_secondary",
+    "date_type",
+    "description",
+    "due_date",
+    "owed_to_company",
+    "owed_to_name",
+    "owner_company",
+    "owner_name"
+  ],
+  "x-hash-algorithm": "SHA-256",
+  "x-hash-canonicalization": "alphabetical-key JSON with no whitespace, UTF-8 encoded; missing string fields default to \"\", missing optional fields default to null"
+}

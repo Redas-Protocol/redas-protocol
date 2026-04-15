@@ -1,0 +1,165 @@
+[
+  {
+    "name": "minimal_required_fields_only",
+    "description": "Only the three required fields. All optional fields absent.",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob"
+    }
+  },
+  {
+    "name": "full_canonical_fields",
+    "description": "All nine canonical hash fields populated.",
+    "input": {
+      "description": "Install the 480V transformer pad before the site walkthrough",
+      "owner_name": "John Smith",
+      "owner_company": "PCL Solar",
+      "owed_to_name": "Mike Stevenson",
+      "owed_to_company": "Norwood Solar Project",
+      "due_date": "2026-05-15",
+      "date_type": "exact",
+      "category_primary": "Schedule",
+      "category_secondary": "Electrical"
+    }
+  },
+  {
+    "name": "empty_optional_strings_equal_missing",
+    "description": "owner_company and owed_to_company passed as empty strings — must hash identically to 'minimal_required_fields_only'.",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owner_company": "",
+      "owed_to_name": "Bob",
+      "owed_to_company": ""
+    },
+    "expected_hash_same_as": "minimal_required_fields_only"
+  },
+  {
+    "name": "explicit_nulls_equal_missing",
+    "description": "Optional fields explicitly null — must hash identically to 'minimal_required_fields_only'.",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owner_company": null,
+      "owed_to_name": "Bob",
+      "owed_to_company": null,
+      "due_date": null,
+      "date_type": null,
+      "category_primary": null,
+      "category_secondary": null
+    },
+    "expected_hash_same_as": "minimal_required_fields_only"
+  },
+  {
+    "name": "unicode_description",
+    "description": "Description contains non-ASCII characters (French, Japanese, emoji-free). Verifies UTF-8 handling parity between Node and Python.",
+    "input": {
+      "description": "Finaliser le café naïve — 日本語 test",
+      "owner_name": "Élodie",
+      "owed_to_name": "佐藤"
+    }
+  },
+  {
+    "name": "all_date_types_exact",
+    "input": {
+      "description": "Finalize permit",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob",
+      "due_date": "2026-06-01",
+      "date_type": "exact"
+    }
+  },
+  {
+    "name": "all_date_types_asap",
+    "input": {
+      "description": "Finalize permit",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob",
+      "date_type": "asap"
+    }
+  },
+  {
+    "name": "all_date_types_day_of_week",
+    "input": {
+      "description": "Finalize permit",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob",
+      "date_type": "day_of_week"
+    }
+  },
+  {
+    "name": "extra_fields_filtered_out",
+    "description": "Input has fields beyond the 9 canonical hash fields (confidence, context, source_reference, plus spurious extras). They must NOT affect the hash — must hash identically to 'full_canonical_fields'.",
+    "input": {
+      "description": "Install the 480V transformer pad before the site walkthrough",
+      "owner_name": "John Smith",
+      "owner_company": "PCL Solar",
+      "owed_to_name": "Mike Stevenson",
+      "owed_to_company": "Norwood Solar Project",
+      "due_date": "2026-05-15",
+      "date_type": "exact",
+      "category_primary": "Schedule",
+      "category_secondary": "Electrical",
+      "confidence": 90,
+      "context": "From the 10am call",
+      "source_reference": "meeting-123",
+      "something_nonstandard": "should_be_ignored",
+      "id": "uuid-goes-here",
+      "created_at": "2026-04-15T10:30:00Z"
+    },
+    "expected_hash_same_as": "full_canonical_fields"
+  },
+  {
+    "name": "insertion_order_does_not_matter",
+    "description": "Same content as 'full_canonical_fields' but keys are inserted in a scrambled order. Must hash identically because canonicalization sorts alphabetically.",
+    "input": {
+      "owner_name": "John Smith",
+      "category_secondary": "Electrical",
+      "due_date": "2026-05-15",
+      "description": "Install the 480V transformer pad before the site walkthrough",
+      "owed_to_name": "Mike Stevenson",
+      "category_primary": "Schedule",
+      "owner_company": "PCL Solar",
+      "owed_to_company": "Norwood Solar Project",
+      "date_type": "exact"
+    },
+    "expected_hash_same_as": "full_canonical_fields"
+  },
+  {
+    "name": "long_description",
+    "description": "Description is a long paragraph with punctuation, numbers, quotes.",
+    "input": {
+      "description": "Per the 2026-04-12 coordination call at 10:00 CT, EPCS will revise the LOIA to include cancellation charges and updated equipment pricing; Michael to review and sign on behalf of Norwood before the 2026-05-01 site walkthrough. Note: the revised pricing reflects the 4% escalation from the 2025 baseline.",
+      "owner_name": "Elena Vasquez",
+      "owner_company": "EPCS",
+      "owed_to_name": "Michael Stevenson",
+      "owed_to_company": "Norwood Solar Project",
+      "due_date": "2026-05-01",
+      "date_type": "exact",
+      "category_primary": "Financial",
+      "category_secondary": "Contract"
+    }
+  },
+  {
+    "name": "confidence_field_does_not_affect_hash_string",
+    "description": "Confidence='HIGH' — metadata only, must not change hash vs. 'minimal_required_fields_only'.",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob",
+      "confidence": "HIGH"
+    },
+    "expected_hash_same_as": "minimal_required_fields_only"
+  },
+  {
+    "name": "confidence_field_numeric_does_not_affect_hash",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob",
+      "confidence": 95
+    },
+    "expected_hash_same_as": "minimal_required_fields_only"
+  }
+]

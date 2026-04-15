@@ -1,0 +1,15 @@
+{
+  "minimal_required_fields_only": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "full_canonical_fields": "d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8",
+  "empty_optional_strings_equal_missing": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "explicit_nulls_equal_missing": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "unicode_description": "23245e8577c2fc0d030cef242106aaaa805fa8aafc38e1d61e6b6913c025157a",
+  "all_date_types_exact": "ad96868d839e76f39e4386c92bd580c528b29e9a051c94b16462fa239cf375cd",
+  "all_date_types_asap": "6fb28bc084ebf75afa48a109ff01097ce783f264c8bc07cff67baa8aaa702977",
+  "all_date_types_day_of_week": "efee7a12e408e1590b6994160ac0d35b993940e382b22066d13be2de7547b06a",
+  "extra_fields_filtered_out": "d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8",
+  "insertion_order_does_not_matter": "d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8",
+  "long_description": "0a9791a4a30eaf9e98819d4aefcafbae823a524390a4ab0f1c6fb96f9630151f",
+  "confidence_field_does_not_affect_hash_string": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "confidence_field_numeric_does_not_affect_hash": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11"
+}
