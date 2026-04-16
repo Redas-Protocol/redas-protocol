@@ -14,17 +14,17 @@ const { verifyCommitment } = require('../verify');
 
 const commitment = {
   description: 'Install the 480V transformer pad before the site walkthrough',
-  owner_name: 'John Smith',
-  owner_company: 'PCL Solar',
-  owed_to_name: 'Mike Stevenson',
-  owed_to_company: 'Norwood Solar Project',
+  owner_name: 'Priya Ramesh',
+  owner_company: 'Northbridge Construction',
+  owed_to_name: 'Alex Morgan',
+  owed_to_company: 'Riverbend Solar Project',
   due_date: '2026-05-15',
   date_type: 'exact',
   category_primary: 'Schedule',
   category_secondary: 'Electrical',
 };
 
-const storedHash = 'd9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8';
+const storedHash = 'e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047';
 
 const result = verifyCommitment(commitment, storedHash);
 

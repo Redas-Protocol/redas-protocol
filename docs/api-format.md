@@ -39,10 +39,10 @@ X-API-Key: sk_live_...
   "source": "agent",
   "commitment": {
     "description": "Install the 480V transformer pad before the site walkthrough",
-    "owner_name": "John Smith",
-    "owner_company": "PCL Solar",
-    "owed_to_name": "Mike Stevenson",
-    "owed_to_company": "Norwood Solar Project",
+    "owner_name": "Priya Ramesh",
+    "owner_company": "Northbridge Construction",
+    "owed_to_name": "Alex Morgan",
+    "owed_to_company": "Riverbend Solar Project",
     "due_date": "2026-05-15",
     "date_type": "exact",
     "category_primary": "Schedule",
@@ -51,7 +51,7 @@ X-API-Key: sk_live_...
     "context": "From the 10am coordination call.",
     "source_reference": "meeting:2026-04-15-10am"
   },
-  "project": "Norwood Solar Project",
+  "project": "Riverbend Solar Project",
   "authorization": {
     "registered_by": "my-integration",
     "scope_verified": false
@@ -84,7 +84,7 @@ HTTP 201 Created:
 ```json
 {
   "commitment_id": "a3f1e2d4-1234-5678-90ab-cdef12345678",
-  "commitment_hash": "d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8",
+  "commitment_hash": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
   "registered_at": "2026-04-15T14:22:10.334Z",
   "status": "auto_confirmed",
   "source": "agent"
@@ -151,16 +151,16 @@ HTTP 200 OK:
 {
   "commitment": {
     "description": "Install the 480V transformer pad before the site walkthrough",
-    "owner_name": "John Smith",
-    "owner_company": "PCL Solar",
-    "owed_to_name": "Mike Stevenson",
-    "owed_to_company": "Norwood Solar Project",
+    "owner_name": "Priya Ramesh",
+    "owner_company": "Northbridge Construction",
+    "owed_to_name": "Alex Morgan",
+    "owed_to_company": "Riverbend Solar Project",
     "due_date": "2026-05-15",
     "date_type": "exact",
     "category_primary": "Schedule",
     "category_secondary": "Electrical"
   },
-  "commitment_hash": "d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8",
+  "commitment_hash": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
   "hash_valid": true
 }
 ```

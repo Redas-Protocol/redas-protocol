@@ -62,10 +62,10 @@ For the input
 ```json
 {
   "description": "Install the 480V transformer pad before the site walkthrough",
-  "owner_name": "John Smith",
-  "owner_company": "PCL Solar",
-  "owed_to_name": "Mike Stevenson",
-  "owed_to_company": "Norwood Solar Project",
+  "owner_name": "Priya Ramesh",
+  "owner_company": "Northbridge Construction",
+  "owed_to_name": "Alex Morgan",
+  "owed_to_company": "Riverbend Solar Project",
   "due_date": "2026-05-15",
   "date_type": "exact",
   "category_primary": "Schedule",
@@ -76,13 +76,13 @@ For the input
 the canonical JSON string is (formatted here with line breaks for display only — the actual string has NO line breaks and NO spaces):
 
 ```
-{"category_primary":"Schedule","category_secondary":"Electrical","date_type":"exact","description":"Install the 480V transformer pad before the site walkthrough","due_date":"2026-05-15","owed_to_company":"Norwood Solar Project","owed_to_name":"Mike Stevenson","owner_company":"PCL Solar","owner_name":"John Smith"}
+{"category_primary":"Schedule","category_secondary":"Electrical","date_type":"exact","description":"Install the 480V transformer pad before the site walkthrough","due_date":"2026-05-15","owed_to_company":"Riverbend Solar Project","owed_to_name":"Alex Morgan","owner_company":"Northbridge Construction","owner_name":"Priya Ramesh"}
 ```
 
 and the SHA-256 of that string (UTF-8 encoded) is:
 
 ```
-d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8
+e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047
 ```
 
 This is the first non-trivial fixture in the conformance test. If your port produces this exact hash for this exact input, you are on the right track. Run the full conformance suite to confirm all 13 fixtures pass.

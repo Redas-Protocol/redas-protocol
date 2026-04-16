@@ -24,7 +24,7 @@ That's it. Five steps. No network. No state. Pure function.
 const { verifyCommitment } = require('redas-protocol/src/js/verify');
 
 const commitment = { /* ... */ };
-const storedHash = 'd9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8';
+const storedHash = 'e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047';
 
 const result = verifyCommitment(commitment, storedHash);
 if (result.valid) {
@@ -42,7 +42,7 @@ if (result.valid) {
 from redas_protocol.verify import verify_commitment
 
 commitment = { ... }
-stored_hash = "d9c6601868e7580a7b20128f4e5fd67615d79bbe509f49bdfb2e1d06cd98f0f8"
+stored_hash = "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047"
 
 result = verify_commitment(commitment, stored_hash)
 if result["valid"]:

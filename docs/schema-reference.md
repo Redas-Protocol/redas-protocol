@@ -24,28 +24,28 @@ The person making the commitment — the party responsible for delivery.
 
 - **Minimum length:** 1 character
 - **Format:** free-form name string, typically `First Last`
-- **Example:** `"John Smith"`
+- **Example:** `"Priya Ramesh"`
 
 ### `owner_company` (string or null, optional)
 
 The company affiliation of the committer.
 
 - **Hash behavior:** empty string, `null`, and missing are treated identically. All three produce the same hash.
-- **Example:** `"PCL Solar"`
+- **Example:** `"Northbridge Construction"`
 
 ### `owed_to_name` (string, required)
 
 The person the commitment is owed to — the party expecting delivery.
 
 - **Minimum length:** 1 character
-- **Example:** `"Mike Stevenson"`
+- **Example:** `"Alex Morgan"`
 
 ### `owed_to_company` (string or null, optional)
 
 The company affiliation of the recipient.
 
 - **Hash behavior:** empty string, `null`, and missing are treated identically.
-- **Example:** `"Norwood Solar Project"`
+- **Example:** `"Riverbend Solar Project"`
 
 ### `due_date` (string or null, optional)
 

@@ -5,3 +5,8 @@ __pycache__/
 *.swp
 .vscode/
 .idea/
+
+# Local dev tool sandbox — embedded Python for running the
+# conformance test on a Windows machine without a system Python.
+# Not part of the protocol.
+.tools/
