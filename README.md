@@ -166,12 +166,12 @@ Apache License 2.0. See [LICENSE](LICENSE). You may use, modify, distribute, and
 
 ## Status
 
-**Version 1.0.0 — release candidate, not yet published.**
+**Version 1.0.0**
 
-The protocol spec is frozen for v1.0.0. The JavaScript reference passes 13/13 conformance fixtures. Python reference is written and spec-aligned but has not yet been run in this environment (no Python interpreter available at build time — run `python tests/conformance.py` on your machine to confirm). Additional language ports, richer example servers, and Hacker News launch are planned for the next iteration.
+The protocol spec is frozen for v1.0.0. Both JavaScript and Python references pass 13/13 conformance fixtures with byte-identical hashes across languages. Additional language ports (Go, Rust) and richer example servers are planned for future iterations.
 
 ---
 
 ## Contact
 
-Built by Michael Stevenson, a construction project manager who got tired of watching commitments evaporate from meeting to meeting. Reach out at redas.app or file an issue once the repo is public.
+Built by Michael Stevenson, a construction project manager who got tired of watching commitments evaporate from meeting to meeting. Reach out at [redas.app](https://redas.app) or [file an issue](https://github.com/Redas-Protocol/redas-protocol/issues).
