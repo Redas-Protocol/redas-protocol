@@ -16,6 +16,21 @@ This repo is the agreement. It is intentionally minimal. The hash is the feature
 
 ---
 
+## Who builds on this
+
+The protocol is for any system that captures, produces, or acts on commitments between parties. You don't need to build accountability infrastructure — you register to the protocol and inherit it.
+
+- **Voice AI agents** — agents that take calls, qualify leads, negotiate terms, or schedule work. The agent closes a verbal agreement; one `POST /register` turns it into a hash-signed, verifiable record that survives the call.
+- **Meeting intelligence tools** — anything that extracts action items or tasks from recorded conversations. The extractor runs; the protocol makes the output portable, attributable, and disputable.
+- **Project and workflow systems** — document, task, and schedule tools where commitments flow between stakeholders. Register the underlying promise alongside the ticket, and every downstream status change becomes evidentiary.
+- **Dispute resolution and arbitration** — lawyers, arbitrators, and adjudication platforms that need cryptographically-verifiable records of what was promised. Query the protocol, verify the hash, and the record is admissible under federal evidence standards.
+- **Smart contracts and escrow** — on-chain systems that want verbal agreements as inputs. The protocol serves as the off-chain oracle: a commitment registered here can trigger on-chain settlement when its state resolves.
+- **Trust networks and underwriting** — insurance, background checks, and subcontractor vetting workflows that need reliability history. The protocol's reliability data is the query surface; your product decides what to do with it.
+
+The protocol does not care which application captured the commitment, what industry the parties are in, or whether the parties are humans, AI agents, or a mix. Any system that agrees on the nine canonical fields speaks the same language as every other system.
+
+---
+
 ## Quick start — 5 minutes
 
 ### JavaScript (Node.js 18+)
