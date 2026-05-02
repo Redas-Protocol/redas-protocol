@@ -35,8 +35,12 @@ The protocol does not care which application captured the commitment, what indus
 
 ### JavaScript (Node.js 18+)
 
+```bash
+npm install redas-protocol
+```
+
 ```js
-const { generateCommitmentHash } = require('./src/js/hash');
+const { generateCommitmentHash } = require('redas-protocol');
 
 const commitment = {
   description: 'Install the 480V transformer pad before the site walkthrough',
@@ -54,7 +58,7 @@ console.log(generateCommitmentHash(commitment));
 // e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047
 ```
 
-Run the full example:
+Or, working from a clone of the repo without `npm install`:
 
 ```
 node src/js/examples/register.js
@@ -63,8 +67,12 @@ node src/js/examples/verify-commitment.js
 
 ### Python 3.8+
 
+```bash
+pip install redas-protocol
+```
+
 ```python
-from hash import generate_commitment_hash
+from redas_protocol import generate_commitment_hash
 
 commitment = {
     "description": "Install the 480V transformer pad before the site walkthrough",
@@ -82,7 +90,7 @@ print(generate_commitment_hash(commitment))
 # e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047
 ```
 
-Run the full example:
+Or, working from a clone of the repo without `pip install`:
 
 ```
 python src/python/examples/register.py
@@ -101,6 +109,10 @@ redas-protocol/
 ├── LICENSE                         Apache 2.0
 ├── schema/
 │   └── commitment.json             JSON Schema (Draft 2020-12) for a commitment
+├── package.json                    npm package metadata (publishes as `redas-protocol`)
+├── pyproject.toml                  PyPI package metadata (publishes as `redas-protocol`)
+├── index.js                        npm entry point — re-exports src/js/
+├── index.d.ts                      TypeScript types for npm consumers
 ├── src/
 │   ├── js/
 │   │   ├── hash.js                 reference hash implementation (Node.js stdlib only)
@@ -109,8 +121,10 @@ redas-protocol/
 │   │       ├── register.js         build a registration request body + hash
 │   │       └── verify-commitment.js  verify a commitment against a stored hash
 │   └── python/
-│       ├── hash.py                 reference hash implementation (Python stdlib only)
-│       ├── verify.py               offline verification — pure function, no network
+│       ├── redas_protocol/         PyPI package — install via `pip install redas-protocol`
+│       │   ├── __init__.py         public API re-exports + __version__
+│       │   ├── hash.py             reference hash implementation (Python stdlib only)
+│       │   └── verify.py           offline verification — pure function, no network
 │       └── examples/
 │           ├── register.py
 │           └── verify_commitment.py

@@ -23,7 +23,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.pardir, "src", "python"))
 
-from hash import generate_commitment_hash  # noqa: E402
+from redas_protocol import generate_commitment_hash  # noqa: E402
 
 FIXTURES_PATH = os.path.join(os.path.dirname(__file__), "fixtures", "commitments.json")
 EXPECTED_PATH = os.path.join(os.path.dirname(__file__), "expected-hashes.json")

@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "redas-protocol"
+version = "2.0.0"
+description = "Deterministic SHA-256 hashing and offline verification for the Redas Commitment Protocol — a tiny open spec that gives every commitment a portable, hash-anchored identity. Zero dependencies; pure stdlib."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Michael Stevenson", email = "dev@redas.app" },
+]
+keywords = [
+  "commitment",
+  "protocol",
+  "hash",
+  "sha256",
+  "verification",
+  "agent",
+  "tool-use",
+  "function-calling",
+  "ai",
+  "llm",
+  "construction",
+  "accountability",
+  "trust",
+  "audit",
+  "deterministic",
+  "canonical-json",
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Security :: Cryptography",
+]
+# No runtime dependencies. The reference implementation uses only
+# the Python standard library (hashlib + json + re).
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Redas-Protocol/redas-protocol"
+Documentation = "https://github.com/Redas-Protocol/redas-protocol#readme"
+Issues = "https://github.com/Redas-Protocol/redas-protocol/issues"
+Repository = "https://github.com/Redas-Protocol/redas-protocol.git"
+
+[tool.setuptools]
+# The package source lives under src/python/ (mirroring the JS
+# reference at src/js/). Tell setuptools to treat that directory
+# as the import root.
+package-dir = { "" = "src/python" }
+
+[tool.setuptools.packages.find]
+where = ["src/python"]
+include = ["redas_protocol*"]

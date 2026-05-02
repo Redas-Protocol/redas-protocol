@@ -13,10 +13,11 @@ import json
 import os
 import sys
 
-# Allow running this example directly without installing the package.
+# Allow running this example directly without `pip install`-ing the
+# package: add the parent of the redas_protocol package to sys.path.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.pardir))
 
-from hash import generate_commitment_hash  # noqa: E402
+from redas_protocol import generate_commitment_hash  # noqa: E402
 
 
 commitment = {

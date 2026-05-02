@@ -13,7 +13,7 @@ Apache 2.0 License - see LICENSE at repo root.
 
 import re
 
-from hash import PROTOCOL_VERSION, generate_commitment_hash
+from .hash import PROTOCOL_VERSION, generate_commitment_hash
 
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 

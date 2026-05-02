@@ -291,11 +291,16 @@ See [`docs/api-format.md`](api-format.md) for the full request/response specific
 The hash returned at registration is the commitment's **identity**. Anyone — your downstream system, the counterparty, an arbiter, a journalist — can fetch the canonical fields and re-compute the hash locally. If they match, the record is provably the original.
 
 ```js
+```bash
+npm install redas-protocol     # or: pip install redas-protocol
+```
+
+```js
 // Downstream system, no Redas credentials, no trust in the registering server.
 const verify = await fetch(`https://api.example.com/commitments/verify/${commitmentId}`);
 const { commitment_hash, canonical_fields, protocol_version } = await verify.json();
 
-const { generateCommitmentHash } = require("./redas-protocol/src/js/hash");
+const { generateCommitmentHash } = require("redas-protocol");
 const recomputed = generateCommitmentHash(canonical_fields);
 
 if (recomputed === commitment_hash) {

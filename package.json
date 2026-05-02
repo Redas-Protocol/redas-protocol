@@ -1,0 +1,50 @@
+{
+  "name": "redas-protocol",
+  "version": "2.0.0",
+  "description": "Deterministic SHA-256 hashing and offline verification for the Redas Commitment Protocol — a tiny open spec that gives every commitment a portable, hash-anchored identity. Zero dependencies; pure stdlib.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "src/js/hash.js",
+    "src/js/verify.js",
+    "schema/commitment.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node tests/conformance.js"
+  },
+  "keywords": [
+    "commitment",
+    "protocol",
+    "hash",
+    "sha256",
+    "verification",
+    "agent",
+    "tool-use",
+    "function-calling",
+    "ai",
+    "llm",
+    "construction",
+    "accountability",
+    "trust",
+    "audit",
+    "deterministic",
+    "canonical-json"
+  ],
+  "author": "Michael Stevenson <dev@redas.app>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/Redas-Protocol/redas-protocol#readme",
+  "bugs": {
+    "url": "https://github.com/Redas-Protocol/redas-protocol/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Redas-Protocol/redas-protocol.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
