@@ -120,7 +120,7 @@ redas-protocol/
 │   ├── verification-guide.md       how to verify a commitment offline
 │   └── api-format.md               POST /register and GET /verify wire format
 └── tests/
-    ├── fixtures/commitments.json   13 test inputs including edge cases
+    ├── fixtures/commitments.json   15 test inputs including edge cases + v1 legacy fixtures
     ├── expected-hashes.json        ground-truth hashes for the fixtures
     ├── conformance.js              JavaScript conformance runner
     └── conformance.py              Python conformance runner
@@ -152,14 +152,14 @@ See [`docs/schema-reference.md`](docs/schema-reference.md) for a full field-by-f
 
 ## Porting to another language
 
-The hash function is simple enough to fit in a tweet:
+The hash function is simple enough to fit in a tweet (under v2, current):
 
-1. Pick the nine canonical fields from the input. Default missing string fields to `""` and missing optional fields to `null`.
+1. Pick the nine canonical fields from the input. For string fields, preserve `null`/missing as the JSON `null` literal (NOT empty string — that's the v1 → v2 change). For optional non-string fields, default missing/falsy to `null`.
 2. Serialize as JSON with keys sorted alphabetically, no whitespace, real UTF-8 (not ASCII-escaped).
 3. SHA-256 the UTF-8 bytes of that string.
 4. Return the 64-character lowercase hex digest.
 
-The tricky parts are all in the details: exact JSON serialization semantics, unicode handling, how your language's `null`/`None`/`nil` maps to JSON. [`docs/hash-specification.md`](docs/hash-specification.md) spells all of this out. Once your port passes the 13 fixtures in `tests/conformance.<ext>`, it's compliant.
+The tricky parts are all in the details: exact JSON serialization semantics, unicode handling, how your language's `null`/`None`/`nil` maps to JSON, and the v1 fallback path that verifiers need to support legacy commitments. [`docs/hash-specification.md`](docs/hash-specification.md) spells all of this out. Once your port passes all 15 fixtures in `tests/conformance.<ext>` (13 v2 fixtures + 2 v1 legacy fixtures), it's compliant.
 
 If you write a Go, Rust, Java, or Ruby port, we'd love a pull request.
 
@@ -181,9 +181,13 @@ Apache License 2.0. See [LICENSE](LICENSE). You may use, modify, distribute, and
 
 ## Status
 
-**Version 1.0.0**
+**Version 2.0.0** (released 2026-04-26)
 
-The protocol spec is frozen for v1.0.0. Both JavaScript and Python references pass 13/13 conformance fixtures with byte-identical hashes across languages. Additional language ports (Go, Rust) and richer example servers are planned for future iterations.
+The protocol spec is at v2.0.0. Both JavaScript and Python references pass 15/15 conformance fixtures with byte-identical hashes across languages — 13 v2 fixtures plus 2 v1 legacy fixtures pinning the verification fallback path so pre-2026-04-26 commitments stay verifiable forever.
+
+The change from v1 → v2 was a single rule: string fields now preserve `null` distinctly from `""` (v1 collapsed both, which silently conflated "we don't know" with "empty"). A commitment with all string fields populated produces the **same hash under v1 and v2** — most existing commitments are unaffected. See [`docs/hash-specification.md` § Protocol versioning](docs/hash-specification.md) for the full rationale and migration semantics.
+
+Additional language ports (Go, Rust) and richer example servers are planned for future iterations.
 
 ---
 

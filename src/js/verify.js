@@ -14,7 +14,7 @@
 
 'use strict';
 
-const { generateCommitmentHash } = require('./hash');
+const { generateCommitmentHash, PROTOCOL_VERSION } = require('./hash');
 
 function verifyCommitment(commitment, storedHash) {
   if (storedHash === null || storedHash === undefined || storedHash === '') {
@@ -23,6 +23,7 @@ function verifyCommitment(commitment, storedHash) {
       expected_hash: null,
       stored_hash: null,
       reason: 'legacy_null_hash',
+      protocol_version: null,
     };
   }
 
@@ -32,17 +33,48 @@ function verifyCommitment(commitment, storedHash) {
       expected_hash: null,
       stored_hash: storedHash,
       reason: 'malformed_hash',
+      protocol_version: null,
     };
   }
 
-  const expectedHash = generateCommitmentHash(commitment);
-  const valid = expectedHash === storedHash;
+  // Try the current protocol version first. The vast majority of
+  // commitments registered after 2026-04-26 use v2, so this is the
+  // hot path.
+  const v2Hash = generateCommitmentHash(commitment, { version: PROTOCOL_VERSION });
+  if (v2Hash === storedHash) {
+    return {
+      valid: true,
+      expected_hash: v2Hash,
+      stored_hash: storedHash,
+      reason: 'match',
+      protocol_version: PROTOCOL_VERSION,
+    };
+  }
+
+  // Fallback: v1 hashes used `|| ''` for string fields, which
+  // collapsed null and "" to the same canonical form. Pre-2026-04-26
+  // commitments were registered this way and their hashes are now
+  // verifiable only via this path. We never re-hash existing rows;
+  // they keep their original v1 hash and verifiers fall through here.
+  if (PROTOCOL_VERSION > 1) {
+    const v1Hash = generateCommitmentHash(commitment, { version: 1 });
+    if (v1Hash === storedHash) {
+      return {
+        valid: true,
+        expected_hash: v1Hash,
+        stored_hash: storedHash,
+        reason: 'v1_legacy_match',
+        protocol_version: 1,
+      };
+    }
+  }
 
   return {
-    valid,
-    expected_hash: expectedHash,
+    valid: false,
+    expected_hash: v2Hash,
     stored_hash: storedHash,
-    reason: valid ? 'match' : 'mismatch',
+    reason: 'mismatch',
+    protocol_version: null,
   };
 }
 

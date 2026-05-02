@@ -30,7 +30,12 @@ const shouldUpdate = process.argv.includes('--update');
 
 const computed = {};
 for (const fixture of fixtures) {
-  computed[fixture.name] = generateCommitmentHash(fixture.input);
+  // Fixtures with `version: 1` exercise the legacy v1 canonicalization
+  // (used by verifyCommitment's fallback path for pre-2026-04-26 rows).
+  // Fixtures without a `version` field default to the current
+  // PROTOCOL_VERSION (currently 2).
+  const opts = fixture.version ? { version: fixture.version } : undefined;
+  computed[fixture.name] = generateCommitmentHash(fixture.input, opts);
 }
 
 if (shouldUpdate) {

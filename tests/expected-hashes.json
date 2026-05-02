@@ -1,15 +1,17 @@
 {
-  "minimal_required_fields_only": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "minimal_required_fields_only": "286f7126b3109398d243703edfd78992d12a4cdf7fd02c1f8d0f625dec581333",
   "full_canonical_fields": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
-  "empty_optional_strings_equal_missing": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
-  "explicit_nulls_equal_missing": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
-  "unicode_description": "23245e8577c2fc0d030cef242106aaaa805fa8aafc38e1d61e6b6913c025157a",
-  "all_date_types_exact": "ad96868d839e76f39e4386c92bd580c528b29e9a051c94b16462fa239cf375cd",
-  "all_date_types_asap": "6fb28bc084ebf75afa48a109ff01097ce783f264c8bc07cff67baa8aaa702977",
-  "all_date_types_day_of_week": "efee7a12e408e1590b6994160ac0d35b993940e382b22066d13be2de7547b06a",
+  "empty_optional_strings_distinct_from_missing_v2": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "explicit_nulls_equal_missing": "286f7126b3109398d243703edfd78992d12a4cdf7fd02c1f8d0f625dec581333",
+  "unicode_description": "78f3d1e893dd4e6284588bb259f7c3528e1abeddd47f1a23057f1a600f72938c",
+  "all_date_types_exact": "04189ba09abd47f76e7faf0dd5cea6a0b354a9dcb947e89851b83ad8b584b15b",
+  "all_date_types_asap": "4e6e952b6b7346ca50edf4302432739be44b88bbe457a15bf980d291f92e45a1",
+  "all_date_types_day_of_week": "3fada1d965252cf2c27a69129fb99a7bcb9b8b4625b72ef5e9762332217c3d49",
   "extra_fields_filtered_out": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
   "insertion_order_does_not_matter": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
   "long_description": "c2f5de975c01f21f3ac85b08b66f01792ccd6f5584616cd21dccb317ec4b0b4f",
-  "confidence_field_does_not_affect_hash_string": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
-  "confidence_field_numeric_does_not_affect_hash": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11"
+  "confidence_field_does_not_affect_hash_string": "286f7126b3109398d243703edfd78992d12a4cdf7fd02c1f8d0f625dec581333",
+  "confidence_field_numeric_does_not_affect_hash": "286f7126b3109398d243703edfd78992d12a4cdf7fd02c1f8d0f625dec581333",
+  "v1_legacy_minimal_required_fields_only": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11",
+  "v1_legacy_empty_optional_strings_equal_missing": "6ee3d2bccbc20c50cbc747178d33b42980267b777929af51e19fe3414373bb11"
 }

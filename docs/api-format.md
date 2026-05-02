@@ -136,12 +136,17 @@ HTTP 401 Unauthorized:
 
 Fetches a commitment by its server-assigned ID and returns the current hash along with a verification result.
 
+**This endpoint is PUBLIC by protocol contract.** Anyone with a `commitment_id` can call it without an `Authorization` header. That is the core trust property of the open protocol — third parties must be able to verify a hash without holding Redas credentials. Implementations that gate this endpoint behind authentication are non-compliant.
+
+The response is a deliberately sanitized projection of the underlying commitment row. Only the nine canonical fields plus public lifecycle metadata are returned. Notes, internal flags, owner identifiers, thread metadata, and any other private columns MUST NOT leak through this endpoint.
+
 ### Request
 
 ```
 GET /commitments/verify/a3f1e2d4-1234-5678-90ab-cdef12345678
-Authorization: Bearer <token>
 ```
+
+No `Authorization` header. No body.
 
 ### Response — success
 
@@ -149,7 +154,11 @@ HTTP 200 OK:
 
 ```json
 {
-  "commitment": {
+  "commitment_id": "a3f1e2d4-1234-5678-90ab-cdef12345678",
+  "commitment_hash": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
+  "hash_valid": true,
+  "protocol_version": 2,
+  "canonical_fields": {
     "description": "Install the 480V transformer pad before the site walkthrough",
     "owner_name": "Priya Ramesh",
     "owner_company": "Northbridge Construction",
@@ -160,12 +169,16 @@ HTTP 200 OK:
     "category_primary": "Schedule",
     "category_secondary": "Electrical"
   },
-  "commitment_hash": "e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047",
-  "hash_valid": true
+  "status": "open",
+  "registered_at": "2026-04-22",
+  "source_reference": null,
+  "registered_by": null
 }
 ```
 
-The `commitment` object returned SHOULD contain only the nine canonical fields (plus any metadata fields the server wants to expose). The client can then recompute the hash locally and cross-check — that is the core use case of the verify endpoint.
+`canonical_fields` is the input object that, when canonicalized and SHA-256 hashed per `docs/hash-specification.md`, MUST produce `commitment_hash` exactly when `hash_valid` is `true`. Clients re-running the math themselves get the same answer — that is the trustless verification property.
+
+`protocol_version` indicates which canonicalization rules the stored hash matches — `2` for current registrations, `1` for legacy pre-2026-04-26 commitments that pass verification only via the v1 fallback. Implementations that bump the protocol version SHOULD continue to validate older hashes via fallback so legacy registrations remain verifiable. This field mirrors the `protocol_version` field returned by the offline `verifyCommitment` reference implementations.
 
 ### Response — not found
 

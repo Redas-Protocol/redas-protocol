@@ -79,7 +79,7 @@
   },
   "additionalProperties": false,
 
-  "x-redas-protocol-version": "1.0.0",
+  "x-redas-protocol-version": "2.0.0",
   "x-canonical-hash-fields": [
     "category_primary",
     "category_secondary",

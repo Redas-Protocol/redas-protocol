@@ -10,7 +10,7 @@
   },
   {
     "name": "full_canonical_fields",
-    "description": "All nine canonical hash fields populated.",
+    "description": "All nine canonical hash fields populated. Identical hash under v1 and v2 because no null-vs-empty-string ambiguity exists.",
     "input": {
       "description": "Install the 480V transformer pad before the site walkthrough",
       "owner_name": "Priya Ramesh",
@@ -24,20 +24,19 @@
     }
   },
   {
-    "name": "empty_optional_strings_equal_missing",
-    "description": "owner_company and owed_to_company passed as empty strings — must hash identically to 'minimal_required_fields_only'.",
+    "name": "empty_optional_strings_distinct_from_missing_v2",
+    "description": "owner_company and owed_to_company passed as empty strings. Under v2 these are PRESERVED as \"\" in the canonical form, distinct from the null produced when those fields are absent. Under v1 they would have collapsed to the same hash as 'minimal_required_fields_only'. This fixture exists to catch any regression that re-introduces the v1 null/empty-string conflation.",
     "input": {
       "description": "Deliver site survey",
       "owner_name": "Alice",
       "owner_company": "",
       "owed_to_name": "Bob",
       "owed_to_company": ""
-    },
-    "expected_hash_same_as": "minimal_required_fields_only"
+    }
   },
   {
     "name": "explicit_nulls_equal_missing",
-    "description": "Optional fields explicitly null — must hash identically to 'minimal_required_fields_only'.",
+    "description": "Optional fields explicitly null - must hash identically to 'minimal_required_fields_only' under both v1 and v2 (null and 'absent' are equivalent in both versions).",
     "input": {
       "description": "Deliver site survey",
       "owner_name": "Alice",
@@ -90,7 +89,7 @@
   },
   {
     "name": "extra_fields_filtered_out",
-    "description": "Input has fields beyond the 9 canonical hash fields (confidence, context, source_reference, plus spurious extras). They must NOT affect the hash — must hash identically to 'full_canonical_fields'.",
+    "description": "Input has fields beyond the 9 canonical hash fields (confidence, context, source_reference, plus spurious extras). They must NOT affect the hash - must hash identically to 'full_canonical_fields'.",
     "input": {
       "description": "Install the 480V transformer pad before the site walkthrough",
       "owner_name": "Priya Ramesh",
@@ -143,7 +142,7 @@
   },
   {
     "name": "confidence_field_does_not_affect_hash_string",
-    "description": "Confidence='HIGH' — metadata only, must not change hash vs. 'minimal_required_fields_only'.",
+    "description": "Confidence='HIGH' - metadata only, must not change hash vs. 'minimal_required_fields_only'.",
     "input": {
       "description": "Deliver site survey",
       "owner_name": "Alice",
@@ -161,5 +160,28 @@
       "confidence": 95
     },
     "expected_hash_same_as": "minimal_required_fields_only"
+  },
+  {
+    "name": "v1_legacy_minimal_required_fields_only",
+    "version": 1,
+    "description": "Same input as 'minimal_required_fields_only' but hashed under v1 rules. v1 collapsed missing string fields to \"\" instead of null, so the v1 hash differs from the v2 hash for the same input. Pinned to catch regressions in the v1 fallback path that verifyCommitment uses for pre-2026-04-26 commitments.",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owed_to_name": "Bob"
+    }
+  },
+  {
+    "name": "v1_legacy_empty_optional_strings_equal_missing",
+    "version": 1,
+    "description": "Under v1, owner_company=\"\" and owed_to_company=\"\" hash IDENTICALLY to the missing case (because v1 collapsed both to \"\"). Pinned alongside 'v1_legacy_minimal_required_fields_only' so both v1 fixtures must produce the same hash - this is the v1 invariant v2 deliberately broke.",
+    "input": {
+      "description": "Deliver site survey",
+      "owner_name": "Alice",
+      "owner_company": "",
+      "owed_to_name": "Bob",
+      "owed_to_company": ""
+    },
+    "expected_hash_same_as": "v1_legacy_minimal_required_fields_only"
   }
 ]

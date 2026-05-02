@@ -6,27 +6,48 @@ This document is the contract. Any language port (JavaScript, Python, Go, Rust, 
 
 ---
 
+## Protocol versioning
+
+Two protocol versions are defined. They differ in **one rule** — the default value for missing or falsy *string* fields.
+
+| Version | Released   | String-field default | Optional-field default | Status |
+|---------|------------|----------------------|------------------------|--------|
+| **v1**  | 2026-04-15 | empty string `""`    | `null`                 | Frozen — supported for verification of pre-v2 commitments. New registrations MUST NOT use v1. |
+| **v2**  | 2026-04-26 | `null` preserved as JSON null literal | `null` | Current — all new registrations use v2. |
+
+**Why the change:** v1 collapsed `null` and `""` into the same hash by treating both as empty string. This conflated semantically distinct states ("we don't know the company" vs "the company is empty") and made identity-resolution downstream (reliability scores, dedup, trust profiles) silently noisy. v2 follows RFC 8785 (JSON Canonicalization Scheme) by preserving `null` as the literal `null` token, distinct from `""`.
+
+**Practical impact:**
+
+- A commitment with all string fields populated produces the **same hash under v1 and v2**. Most existing commitments are unaffected.
+- A commitment with `owner_company = null` (or absent) produces a **different hash under v2** than under v1. v1 hashed `""`; v2 hashes `null`.
+- Verifiers SHOULD attempt v2 first, then fall back to v1 for legacy rows. The Redas reference implementation does this in `verifyCommitment`.
+
+The remainder of this document describes v2. The v1 sections are preserved at the bottom for verification of legacy rows.
+
+---
+
 ## Inputs
 
 The hash function takes a single argument: a commitment object (a map / dict / struct / hash-table / record — whichever your language calls it). Only these nine fields participate in the hash, in this order after canonicalization:
 
-| # | Field | JSON type | Required in input | Default if missing or falsy |
+| # | Field | JSON type | Required in input | Default if absent (v2) |
 |---|---|---|---|---|
 | 1 | `category_primary`   | string or null | no  | `null` |
 | 2 | `category_secondary` | string or null | no  | `null` |
 | 3 | `date_type`          | string or null | no  | `null` |
-| 4 | `description`        | string         | yes | `""`   |
+| 4 | `description`        | string or null | yes | `null` (was `""` in v1) |
 | 5 | `due_date`           | string or null | no  | `null` |
-| 6 | `owed_to_company`    | string or null | no  | `""`   |
-| 7 | `owed_to_name`       | string         | yes | `""`   |
-| 8 | `owner_company`      | string or null | no  | `""`   |
-| 9 | `owner_name`         | string         | yes | `""`   |
+| 6 | `owed_to_company`    | string or null | no  | `null` (was `""` in v1) |
+| 7 | `owed_to_name`       | string or null | yes | `null` (was `""` in v1) |
+| 8 | `owner_company`      | string or null | no  | `null` (was `""` in v1) |
+| 9 | `owner_name`         | string or null | yes | `null` (was `""` in v1) |
 
-String-field defaults (`description`, `owner_name`, `owner_company`, `owed_to_name`, `owed_to_company`) are the empty string `""`.
+**v2 string-field rule (changed from v1):** if the input value for a string field is `null` or `undefined`, it is canonicalized as the JSON null literal — NOT `""`. An empty string `""` in the input remains `""`. This makes the two states semantically distinguishable and produces different hashes.
 
-Optional-field defaults (`due_date`, `date_type`, `category_primary`, `category_secondary`) are `null`.
+Optional-field defaults (`due_date`, `date_type`, `category_primary`, `category_secondary`) are `null` — unchanged from v1.
 
-**"Missing or falsy"** means: the field is absent from the input object, or its value is `null`, `undefined`, empty string, `0`, or `false`. In both reference implementations the `||` (JavaScript) / `or` (Python) operators produce this behavior natively. If your language does not have a short-circuit default operator, replicate the behavior explicitly.
+**"Missing"** means: the field is absent from the input object, or its value is `null` or `undefined`. The empty string `""`, `0`, and `false` are treated as **present values** (not missing) and serialized literally — this is also a change from v1, where `""` was indistinguishable from `null`.
 
 Any field in the input object that is not in this list of nine is ignored. This means `confidence`, `context`, `source_reference`, database IDs, timestamps, and any other metadata fields do NOT change the hash. This is intentional — only commitment identity participates in the hash, not storage metadata.
 
@@ -34,7 +55,9 @@ Any field in the input object that is not in this list of nine is ignored. This 
 
 ## Canonicalization algorithm
 
-1. **Build the canonical object.** Start with an empty map. For each of the nine canonical fields (in any order — the next step fixes the order), read the value from the input. If the field is in the string-field set, default to `""` when missing or falsy; otherwise default to `null` when missing or falsy.
+1. **Build the canonical object.** Start with an empty map. For each of the nine canonical fields (in any order — the next step fixes the order), read the value from the input.
+   - If the field is in the **string-field set** (`description`, `owner_name`, `owner_company`, `owed_to_name`, `owed_to_company`): preserve `null`/`undefined`/absent as the JSON `null` literal. Stringify any other value (including `""`, which stays `""` and is now distinct from `null`). This is the v2 rule. Implementations targeting **v1 only** (legacy verification) should default to `""` instead.
+   - If the field is in the **optional-field set** (`due_date`, `date_type`, `category_primary`, `category_secondary`): default to `null` when the input value is missing or falsy. Unchanged across versions.
 
 2. **Serialize to JSON with these exact settings:**
    - Keys sorted **alphabetically** (ASCII / lexicographic order, which puts `category_primary` first and `owner_name` last). Sorted order is:
@@ -85,7 +108,7 @@ and the SHA-256 of that string (UTF-8 encoded) is:
 e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047
 ```
 
-This is the first non-trivial fixture in the conformance test. If your port produces this exact hash for this exact input, you are on the right track. Run the full conformance suite to confirm all 13 fixtures pass.
+This is the first non-trivial fixture in the conformance test. If your port produces this exact hash for this exact input, you are on the right track. Note that this particular hash is identical under v1 and v2 because every string field is populated — the protocol versions diverge only when string fields are `null` or absent. Run the full conformance suite to confirm all 15 fixtures pass (13 v2 fixtures + 2 v1 legacy fixtures pinning the fallback path).
 
 ---
 
@@ -136,7 +159,7 @@ Use `serde_json::to_string` on a `BTreeMap<String, serde_json::Value>` (BTreeMap
 - **Alphabetical key order:** any canonical JSON scheme must eliminate insertion-order ambiguity. Alphabetical is the one order every JSON library can reproduce without extra code.
 - **No whitespace:** reduces ambiguity about what exactly is being hashed. Different JSON libraries use different defaults for spacing; the only way to make ports agree is to force zero spacing.
 - **Real UTF-8 (not ASCII escapes):** internationalization. Construction projects happen in every language; the protocol must not give up parity with a Japanese or Arabic commitment just because Python's default is to escape non-ASCII.
-- **String defaults `""`, optional defaults `null`:** empty string and null are treated identically on input but distinguished in the canonical form. This matches how JavaScript and Python's truthiness operators behave, and it means `{ owner_company: "" }` hashes the same as `{ owner_company: null }` and the same as `{}` with `owner_company` missing entirely.
+- **String fields preserve `null` distinctly from `""` (v2):** v1 collapsed `null`/absent and `""` into the same canonical value, which silently conflated "we don't know the company" with "the company is empty." v2 follows RFC 8785 (JSON Canonicalization Scheme) and treats them as distinct — `{ owner_company: "" }` no longer hashes the same as `{ owner_company: null }` or as `{}` with `owner_company` absent. Optional non-string fields (`due_date`, `date_type`, `category_*`) still default to `null` for any falsy input.
 
 ---
 
@@ -156,8 +179,13 @@ Changing any of these fields will NOT change the hash. This is by design: the ha
 
 ## Versioning
 
-This specification is **version 1.0.0**. The schema JSON exposes this under `x-redas-protocol-version`.
+This specification is **version 2.0.0** (released 2026-04-26). The schema JSON exposes this under `x-redas-protocol-version`.
 
-If the canonical field list ever changes (a field added, removed, or renamed; the default behavior altered; a new canonicalization rule introduced), the version will bump and a migration path will be documented. Until then, a conforming implementation may treat this document as immutable.
+The change from v1.0.0 → v2.0.0 was the string-field default rule (see § Protocol versioning at the top of this document). The canonical field list is identical; only the string-field handling diverges. Implementations are expected to:
 
-A test-suite regression is the fastest way to catch an accidental spec drift. Every port should run `tests/conformance.<ext>` against the committed `tests/expected-hashes.json` on CI.
+1. Use v2 for **new registrations**.
+2. Use v2 first when **verifying** a stored hash, then fall back to v1 if v2 doesn't match. This keeps pre-2026-04-26 commitments verifiable without re-hashing them. The reference implementations in `src/js/verify.js` and `src/python/verify.py` follow this pattern; the `protocol_version` field in the verify result tells you which version actually matched.
+
+If the canonical field list itself ever changes (a field added, removed, or renamed; a new canonicalization rule introduced beyond the v1→v2 string handling), the major version will bump again and a new migration path will be documented. Until then, a v2-conforming implementation may treat this document as immutable.
+
+A test-suite regression is the fastest way to catch an accidental spec drift. Every port should run `tests/conformance.<ext>` against the committed `tests/expected-hashes.json` on CI. The fixture file includes both v2 fixtures (default) and explicit `version: 1` fixtures pinning the legacy hashes — both must pass for v1 verification fallback to remain trustworthy.

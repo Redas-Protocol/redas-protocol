@@ -33,7 +33,13 @@ def main():
     with open(FIXTURES_PATH, "r", encoding="utf-8") as f:
         fixtures = json.load(f)
 
-    computed = {f["name"]: generate_commitment_hash(f["input"]) for f in fixtures}
+    # Fixtures with `version: 1` exercise the legacy v1 canonicalization
+    # (used by verify_commitment's fallback path for pre-2026-04-26 rows).
+    # Fixtures without a `version` field default to PROTOCOL_VERSION.
+    computed = {
+        f["name"]: generate_commitment_hash(f["input"], version=f.get("version"))
+        for f in fixtures
+    }
 
     if "--update" in sys.argv:
         with open(EXPECTED_PATH, "w", encoding="utf-8") as f:

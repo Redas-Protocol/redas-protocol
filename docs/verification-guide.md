@@ -55,19 +55,21 @@ else:
 
 ## Return value
 
-Both reference implementations return a dict / object with four fields:
+Both reference implementations return a dict / object with five fields:
 
 | Field | Type | Meaning |
 |---|---|---|
-| `valid` | boolean | `true` if the object's canonical hash matches the stored hash |
+| `valid` | boolean | `true` if the object's canonical hash matches the stored hash under either v2 or v1 |
 | `expected_hash` | string or null | the hash the implementation computed from the object |
 | `stored_hash` | string or null | the hash passed in (echoed back for debugging) |
-| `reason` | string | one of: `"match"`, `"mismatch"`, `"legacy_null_hash"`, `"malformed_hash"` |
+| `reason` | string | one of: `"match"`, `"v1_legacy_match"`, `"mismatch"`, `"legacy_null_hash"`, `"malformed_hash"` |
+| `protocol_version` | number or null | which protocol version produced the matching hash (`2` for current, `1` for legacy fallback, `null` when no match) |
 
 ### Reason values
 
-- **`"match"`** — hashes are byte-identical. The commitment is verified.
-- **`"mismatch"`** — a hash was provided but does not match. Either the object was tampered with, or it was not the object originally hashed. Investigate.
+- **`"match"`** — v2 hashes are byte-identical. The commitment is verified under the current protocol version.
+- **`"v1_legacy_match"`** — v2 hash didn't match, but the v1 (pre-2026-04-26) hash does. The commitment is verified against the legacy canonicalization rules. Pre-existing commitments are not re-hashed when the protocol upgrades; this fallback path keeps them verifiable. `protocol_version` will be `1` in this case — surface it to the caller if your application cares (e.g. to flag legacy-era commitments for review).
+- **`"mismatch"`** — neither v2 nor v1 matched. Either the object was tampered with, or it was not the object originally hashed. Investigate.
 - **`"legacy_null_hash"`** — `null` or empty string was passed as the stored hash. Verification returns `valid: true` because there is nothing to verify against. This accommodates commitments created before the hash field existed. If you are writing a new implementation for new data, consider treating this as `valid: false` — or at least surfacing the condition to the caller so they don't silently trust unhashed records. The reference implementation chooses `valid: true` to match the behavior of the original Redas backend, but this is a judgment call, not a spec requirement.
 - **`"malformed_hash"`** — the stored hash is not a 64-character lowercase hex string. Returns `valid: false`.
 
@@ -75,22 +77,30 @@ Both reference implementations return a dict / object with four fields:
 
 ## Verification in other languages
 
-The verify function is trivial to port. Pseudocode:
+The verify function is trivial to port. Pseudocode (with the v2 → v1 fallback for legacy commitments):
 
 ```
 function verify(commitment, stored_hash):
     if stored_hash is null or empty:
-        return { valid: true, reason: "legacy_null_hash" }
+        return { valid: true, reason: "legacy_null_hash", protocol_version: null }
     if stored_hash is not 64-char lowercase hex:
-        return { valid: false, reason: "malformed_hash" }
-    expected = generate_commitment_hash(commitment)
-    if expected == stored_hash:
-        return { valid: true, reason: "match", expected_hash: expected }
-    else:
-        return { valid: false, reason: "mismatch", expected_hash: expected }
+        return { valid: false, reason: "malformed_hash", protocol_version: null }
+
+    v2_hash = generate_commitment_hash(commitment, version=2)
+    if v2_hash == stored_hash:
+        return { valid: true, reason: "match", expected_hash: v2_hash, protocol_version: 2 }
+
+    # Fallback: pre-2026-04-26 commitments were registered under v1
+    # (which collapsed null/empty-string for string fields). They are
+    # never re-hashed, so verifiers must try v1 before giving up.
+    v1_hash = generate_commitment_hash(commitment, version=1)
+    if v1_hash == stored_hash:
+        return { valid: true, reason: "v1_legacy_match", expected_hash: v1_hash, protocol_version: 1 }
+
+    return { valid: false, reason: "mismatch", expected_hash: v2_hash, protocol_version: null }
 ```
 
-The only dependency is `generate_commitment_hash`, which is defined in `docs/hash-specification.md` and implemented in `src/js/hash.js` and `src/python/hash.py`.
+The only dependency is `generate_commitment_hash`, which is defined in `docs/hash-specification.md` and implemented in `src/js/hash.js` and `src/python/hash.py`. Both reference implementations accept an optional `version` parameter (`1` or `2`); omit it to use the current default.
 
 ---
 
@@ -108,11 +118,11 @@ If you get a mismatch and believe the commitment has not been tampered with, the
 
 5. **Encoding** — are you hashing the string as UTF-16 (JavaScript default for string-to-bytes) or Latin-1 (historical Python 2 default)? Force UTF-8 explicitly.
 
-6. **Default handling** — are you treating `null` and `""` differently for optional fields? The spec says they must be equivalent on input, canonicalized to the type's default (`""` for required-like string fields, `null` for optional).
+6. **Default handling** — are you treating `null` and `""` correctly for the protocol version you're targeting? Under **v2** (current), the two are distinct for string fields: `null`/absent → JSON `null`, `""` → `""`. Under **v1** (legacy), both collapse to `""`. Optional non-string fields (`due_date`, `date_type`, `category_*`) default to `null` for any falsy input under both versions. If your hash matches v1 but not v2, you are computing v1 — check your string-field default rule.
 
 7. **Extra fields** — are you including fields beyond the canonical nine in the hash input? Filter them out first.
 
-The conformance test suite (`tests/conformance.js` and `tests/conformance.py`) has fixtures specifically designed to catch each of these failure modes. If you are writing a new language port, run it against `tests/expected-hashes.json`. If all 13 fixtures pass, you have a correct implementation.
+The conformance test suite (`tests/conformance.js` and `tests/conformance.py`) has fixtures specifically designed to catch each of these failure modes. If you are writing a new language port, run it against `tests/expected-hashes.json`. If all 15 fixtures pass — including the two `v1_legacy_*` fixtures pinning the v1 fallback path — you have a correct implementation.
 
 ---
 
