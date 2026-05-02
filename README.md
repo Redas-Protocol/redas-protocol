@@ -20,7 +20,7 @@ This repo is the agreement. It is intentionally minimal. The hash is the feature
 
 The protocol is for any system that captures, produces, or acts on commitments between parties. You don't need to build accountability infrastructure — you register to the protocol and inherit it.
 
-- **Voice AI agents** — agents that take calls, qualify leads, negotiate terms, or schedule work. The agent closes a verbal agreement; one `POST /register` turns it into a hash-signed, verifiable record that survives the call.
+- **Voice AI agents and tool-calling LLMs** — agents that take calls, qualify leads, negotiate terms, or schedule work. The agent closes an agreement; one `register_commitment` tool call turns it into a hash-signed, verifiable record that survives the conversation. Drop-in patterns for Anthropic, OpenAI, and custom HTTP integrations are in [`docs/agent-integration.md`](docs/agent-integration.md).
 - **Meeting intelligence tools** — anything that extracts action items or tasks from recorded conversations. The extractor runs; the protocol makes the output portable, attributable, and disputable.
 - **Project and workflow systems** — document, task, and schedule tools where commitments flow between stakeholders. Register the underlying promise alongside the ticket, and every downstream status change becomes evidentiary.
 - **Dispute resolution and arbitration** — lawyers, arbitrators, and adjudication platforms that need cryptographically-verifiable records of what was promised. Query the protocol, verify the hash, and the record is admissible under federal evidence standards.
@@ -118,7 +118,8 @@ redas-protocol/
 │   ├── hash-specification.md       THE CONTRACT — precise rules for hashing
 │   ├── schema-reference.md         field-by-field breakdown of the commitment shape
 │   ├── verification-guide.md       how to verify a commitment offline
-│   └── api-format.md               POST /register and GET /verify wire format
+│   ├── api-format.md               POST /register and GET /verify wire format
+│   └── agent-integration.md        Claude / OpenAI / custom-HTTP integration patterns
 └── tests/
     ├── fixtures/commitments.json   15 test inputs including edge cases + v1 legacy fixtures
     ├── expected-hashes.json        ground-truth hashes for the fixtures
