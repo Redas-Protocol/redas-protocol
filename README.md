@@ -67,11 +67,17 @@ node src/js/examples/verify-commitment.js
 
 ### Python 3.8+
 
+The PyPI package is in flight (publish pending Trusted Publishing setup). For now, use the reference implementation directly from a clone of this repo — same hash output, no dependencies beyond the Python stdlib.
+
 ```bash
-pip install redas-protocol
+git clone https://github.com/Redas-Protocol/redas-protocol.git
+cd redas-protocol
+python src/python/examples/register.py
+python src/python/examples/verify_commitment.py
 ```
 
 ```python
+# Or import directly (PYTHONPATH=src/python):
 from redas_protocol import generate_commitment_hash
 
 commitment = {
@@ -88,13 +94,6 @@ commitment = {
 
 print(generate_commitment_hash(commitment))
 # e88243c9c42657ef090a05bea7146cb283d31ffd238777264c50485f1b485047
-```
-
-Or, working from a clone of the repo without `pip install`:
-
-```
-python src/python/examples/register.py
-python src/python/examples/verify_commitment.py
 ```
 
 **Both implementations must produce the same hash for the same input.** If they diverge, there's a spec drift — run the conformance suite to find it (`node tests/conformance.js` and `python tests/conformance.py`).
