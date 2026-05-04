@@ -6,6 +6,18 @@ A commitment is one party committing to do something for another party, optional
 
 ---
 
+## Who built this
+
+Built by [Michael Stevenson](https://redas.app), a construction project manager who got tired of watching commitments evaporate from meeting to meeting. Twelve years on solar EPC sites — currently running a 107 MWac build in Warren County, Georgia. The protocol came out of his day job: every project, the same pattern. Deals get cut verbally on a phone call or a site walk, then disappear by the time the schedule is updated three weeks later. Nobody's lying. Nobody can remember. The hash fixes that.
+
+---
+
+## Where this fits
+
+Document tools (Procore, Box) track files. Contract tools (Document Crunch, Ironclad) track clauses. The Redas protocol tracks **conversations** — the layer where commitments are actually made. None of those other tools fight for the same slot; this is a substrate they can register into, not compete with.
+
+---
+
 ## Why this exists
 
 AI agents are starting to make commitments on behalf of humans, teams, and companies. "I'll finish the design review by Thursday." "I'll ship the permit application before the close of business." "I'll schedule the inspection for next week." Today, those commitments evaporate the moment the conversation ends. There's no shared ledger, no agreed-on format, no way for a second agent, a human reviewer, or a downstream system to know what was actually committed to — or to verify later that the record matches what was originally said.
@@ -28,6 +40,18 @@ The protocol is for any system that captures, produces, or acts on commitments b
 - **Trust networks and underwriting** — insurance, background checks, and subcontractor vetting workflows that need reliability history. The protocol's reliability data is the query surface; your product decides what to do with it.
 
 The protocol does not care which application captured the commitment, what industry the parties are in, or whether the parties are humans, AI agents, or a mix. Any system that agrees on the nine canonical fields speaks the same language as every other system.
+
+---
+
+## Free protocol, paid service
+
+The protocol is free. The hosted service is the business.
+
+This repo is the spec and the reference clients — Apache 2.0, fork it, build commercial products on it, no permission needed. You can hash, register, and verify commitments with nothing but `node` or `python` and the files in this repo. No account, no API key, no rate limit, no lock-in. That's a load-bearing promise: if [redas.app](https://redas.app) disappears tomorrow, every hash you generated still verifies, forever.
+
+The hosted service at [redas.app](https://redas.app) builds the trust layer on top: persistent identity across projects, reliability scoring, dispute resolution, network effects. Companies pay for that. The protocol stays free so it can become the standard — same shape as TCP/IP being free while AWS makes the money.
+
+Public ledger demo: paste any registered hash at [redas.app/verify/&lt;hash&gt;](https://redas.app/verify) — block-explorer-style lookup, returns the canonical record + bilateral seal timeline. No auth required.
 
 ---
 
@@ -179,14 +203,6 @@ If you write a Go, Rust, Java, or Ruby port, we'd love a pull request.
 
 ---
 
-## The hosted service
-
-This repo is the protocol — the spec and the reference clients. The hosted service is [redas.app](https://redas.app), which builds a layer of reliability scores, trust profiles, and coaching on top. You don't need the hosted service to use the protocol. You can hash, register, and verify commitments with nothing but `node` or `python` and the files in this repo.
-
-If you want the trust layer — persistent identity across projects, reliability tracking across companies, dispute resolution, network effects — that's what the hosted service is for. But the protocol is yours to use, fork, extend, and build on, free of charge and free of lock-in, forever.
-
----
-
 ## License
 
 Apache License 2.0. See [LICENSE](LICENSE). You may use, modify, distribute, and build commercial products on this code; you just need to preserve attribution and the license notice.
@@ -207,4 +223,4 @@ Additional language ports (Go, Rust) and richer example servers are planned for 
 
 ## Contact
 
-Built by Michael Stevenson, a construction project manager who got tired of watching commitments evaporate from meeting to meeting. Reach out at [redas.app](https://redas.app) or [file an issue](https://github.com/Redas-Protocol/redas-protocol/issues).
+Reach out at [redas.app](https://redas.app), or [file an issue](https://github.com/Redas-Protocol/redas-protocol/issues) for protocol feedback, port contributions, or spec questions.
